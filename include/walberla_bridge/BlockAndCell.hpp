@@ -26,7 +26,7 @@
 
 #include "LatticeWalberla.hpp"
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <memory>
 
@@ -52,7 +52,7 @@ IBlock *get_block_extended(std::shared_ptr<StructuredBlockForest> const &blocks,
   return nullptr;
 }
 
-inline boost::optional<BlockAndCell>
+inline std::optional<BlockAndCell>
 get_block_and_cell(::LatticeWalberla const &lattice,
                    Utils::Vector3i const &node, bool consider_ghost_layers) {
   // Get block and local cell

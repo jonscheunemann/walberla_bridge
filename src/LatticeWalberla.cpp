@@ -29,7 +29,7 @@
 
 #include <utils/Vector.hpp>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <cmath>
 #include <initializer_list>

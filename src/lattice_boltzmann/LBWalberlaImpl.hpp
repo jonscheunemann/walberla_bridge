@@ -61,8 +61,8 @@
 #include <utils/interpolation/bspline_3d.hpp>
 #include <utils/math/make_lin_space.hpp>
 
-#include <boost/optional.hpp>
-#include <boost/variant.hpp>
+#include <optional>
+#include <variant>
 
 #include <array>
 #include <cmath>
@@ -97,7 +97,7 @@ protected:
                        typename detail::BoundaryHandlingTrait<
                            FloatType, Architecture>::Dynamic_UBB>;
   using CollisionModel =
-      boost::variant<CollisionModelThermalized, CollisionModelLeesEdwards>;
+      std::variant<CollisionModelThermalized, CollisionModelLeesEdwards>;
 
 public:
   // Type definitions
@@ -262,7 +262,7 @@ protected:
   // lattice
   std::shared_ptr<LatticeWalberla> m_lattice;
 
-  [[nodiscard]] boost::optional<CellInterval>
+  [[nodiscard]] std::optional<CellInterval>
   get_interval(Utils::Vector3i const &lower_corner,
                Utils::Vector3i const &upper_corner) const {
     auto const &lattice = get_lattice();
@@ -394,7 +394,7 @@ private:
   void integrate_collide(std::shared_ptr<Lattice_T> const &blocks) {
     for (auto b = blocks->begin(); b != blocks->end(); ++b)
       boost::apply_visitor(run_collide_sweep, *m_collision_model,
-                           boost::variant<IBlock *>(&*b));
+                           std::variant<IBlock *>(&*b));
     if (auto *cm = boost::get<CollisionModelThermalized>(&*m_collision_model)) {
       cm->time_step_++;
     }
@@ -577,7 +577,7 @@ public:
   }
 
   // Velocity
-  boost::optional<Utils::Vector3d>
+  std::optional<Utils::Vector3d>
   get_node_velocity(Utils::Vector3i const &node,
                     bool consider_ghosts = false) const override {
     auto const is_boundary = get_node_is_boundary(node, consider_ghosts);
@@ -680,7 +680,7 @@ public:
     }
   }
 
-  boost::optional<Utils::Vector3d>
+  std::optional<Utils::Vector3d>
   get_velocity_at_pos(Utils::Vector3d const &pos,
                       bool consider_points_in_halo = false) const override {
     if (!consider_points_in_halo and !m_lattice->pos_in_local_domain(pos))
@@ -703,7 +703,7 @@ public:
     return {std::move(v)};
   }
 
-  boost::optional<double> get_interpolated_density_at_pos(
+  std::optional<double> get_interpolated_density_at_pos(
       Utils::Vector3d const &pos,
       bool consider_points_in_halo = false) const override {
     if (!consider_points_in_halo and !m_lattice->pos_in_local_domain(pos))
@@ -747,7 +747,7 @@ public:
     return true;
   }
 
-  boost::optional<Utils::Vector3d>
+  std::optional<Utils::Vector3d>
   get_node_force_to_be_applied(Utils::Vector3i const &node) const override {
     auto const bc = get_block_and_cell(get_lattice(), node, true);
     if (!bc)
@@ -759,7 +759,7 @@ public:
     return to_vector3d(vec);
   }
 
-  boost::optional<Utils::Vector3d>
+  std::optional<Utils::Vector3d>
   get_node_last_applied_force(Utils::Vector3i const &node,
                               bool consider_ghosts = false) const override {
     auto const bc = get_block_and_cell(get_lattice(), node, consider_ghosts);
@@ -842,7 +842,7 @@ public:
   }
 
   // Population
-  boost::optional<std::vector<double>>
+  std::optional<std::vector<double>>
   get_node_population(Utils::Vector3i const &node,
                       bool consider_ghosts = false) const override {
     auto bc = get_block_and_cell(get_lattice(), node, consider_ghosts);
@@ -909,7 +909,7 @@ public:
   }
 
   // Density
-  boost::optional<double>
+  std::optional<double>
   get_node_density(Utils::Vector3i const &node,
                    bool consider_ghosts = false) const override {
     auto bc = get_block_and_cell(get_lattice(), node, consider_ghosts);
@@ -966,7 +966,7 @@ public:
     }
   }
 
-  boost::optional<Utils::Vector3d>
+  std::optional<Utils::Vector3d>
   get_node_velocity_at_boundary(Utils::Vector3i const &node,
                                 bool consider_ghosts = false) const override {
     auto const bc = get_block_and_cell(get_lattice(), node, consider_ghosts);
@@ -987,10 +987,10 @@ public:
     return true;
   }
 
-  std::vector<boost::optional<Utils::Vector3d>> get_slice_velocity_at_boundary(
+  std::vector<std::optional<Utils::Vector3d>> get_slice_velocity_at_boundary(
       Utils::Vector3i const &lower_corner,
       Utils::Vector3i const &upper_corner) const override {
-    std::vector<boost::optional<Utils::Vector3d>> out;
+    std::vector<std::optional<Utils::Vector3d>> out;
     if (auto const ci = get_interval(lower_corner, upper_corner)) {
       auto const &lattice = get_lattice();
       auto const local_offset = std::get<0>(lattice.get_local_grid_range());
@@ -1017,7 +1017,7 @@ public:
 
   void set_slice_velocity_at_boundary(
       Utils::Vector3i const &lower_corner, Utils::Vector3i const &upper_corner,
-      std::vector<boost::optional<Utils::Vector3d>> const &velocity) override {
+      std::vector<std::optional<Utils::Vector3d>> const &velocity) override {
     if (auto const ci = get_interval(lower_corner, upper_corner)) {
       auto const &lattice = get_lattice();
       auto const local_offset = std::get<0>(lattice.get_local_grid_range());
@@ -1043,7 +1043,7 @@ public:
     }
   }
 
-  boost::optional<Utils::Vector3d>
+  std::optional<Utils::Vector3d>
   get_node_boundary_force(Utils::Vector3i const &node) const override {
     auto const bc = get_block_and_cell(get_lattice(), node, true);
     if (!bc or !m_boundary->node_is_boundary(node))
@@ -1062,7 +1062,7 @@ public:
     return true;
   }
 
-  boost::optional<bool>
+  std::optional<bool>
   get_node_is_boundary(Utils::Vector3i const &node,
                        bool consider_ghosts = false) const override {
     auto const bc = get_block_and_cell(get_lattice(), node, consider_ghosts);
@@ -1109,7 +1109,7 @@ public:
   }
 
   // Pressure tensor
-  boost::optional<Utils::VectorXd<9>>
+  std::optional<Utils::VectorXd<9>>
   get_node_pressure_tensor(Utils::Vector3i const &node) const override {
     auto bc = get_block_and_cell(get_lattice(), node, false);
     if (!bc)
@@ -1193,7 +1193,7 @@ public:
     return numeric_cast<double>(m_kT);
   }
 
-  [[nodiscard]] boost::optional<uint64_t> get_rng_state() const override {
+  [[nodiscard]] std::optional<uint64_t> get_rng_state() const override {
     auto const *cm = boost::get<CollisionModelThermalized>(&*m_collision_model);
     if (!cm or m_kT == 0.) {
       return {boost::none};

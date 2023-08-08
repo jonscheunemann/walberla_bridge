@@ -18,9 +18,6 @@
  */
 #define BOOST_TEST_MODULE LB walberla node setters and getters test
 #define BOOST_TEST_DYN_LINK
-#include "config/config.hpp"
-
-#ifdef WALBERLA
 
 #define BOOST_TEST_NO_MAIN
 
@@ -626,7 +623,3 @@ int main(int argc, char **argv) {
   MPI_Finalize();
   return res;
 }
-
-#else // WALBERLA
-int main(int argc, char **argv) {}
-#endif

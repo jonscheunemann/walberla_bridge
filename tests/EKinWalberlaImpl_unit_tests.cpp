@@ -18,8 +18,6 @@
  */
 #define BOOST_TEST_MODULE EK walberla node setters and getters test
 #define BOOST_TEST_DYN_LINK
-#include "config/config.hpp
-
 #define BOOST_TEST_NO_MAIN
 
 #include <boost/test/data/monomorphic.hpp>

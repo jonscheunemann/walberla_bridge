@@ -18,9 +18,6 @@
  */
 #define BOOST_TEST_MODULE Walberla statistical tests
 #define BOOST_TEST_DYN_LINK
-#include "config/config.hpp"
-
-#ifdef WALBERLA
 
 #define BOOST_TEST_NO_MAIN
 
@@ -139,7 +136,3 @@ int main(int argc, char **argv) {
   MPI_Finalize();
   return res;
 }
-
-#else // WALBERLA
-int main(int argc, char **argv) {}
-#endif

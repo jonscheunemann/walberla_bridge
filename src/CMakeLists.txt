@@ -21,5 +21,5 @@ add_subdirectory(electrokinetics)
 add_subdirectory(lattice_boltzmann)
 add_subdirectory(utils)
 
-target_sources(espresso_walberla PRIVATE LatticeModel.cpp LatticeWalberla.cpp
+target_sources(walberla_bridge PRIVATE LatticeModel.cpp LatticeWalberla.cpp
                                          walberla_init.cpp)

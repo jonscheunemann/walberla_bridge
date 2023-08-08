@@ -18,21 +18,21 @@
 #
 
 target_sources(
-  espresso_walberla
+  walberla_bridge
   PRIVATE StreamSweepSinglePrecision.cpp StreamSweepDoublePrecision.cpp
           InitialPDFsSetterSinglePrecision.cpp
           InitialPDFsSetterDoublePrecision.cpp Dynamic_UBB_single_precision.cpp
           Dynamic_UBB_double_precision.cpp)
-if(ESPRESSO_BUILD_WITH_WALBERLA_AVX)
+if(WALBERLA_BRIDGE_BUILD_WITH_WALBERLA_AVX)
   target_sources(
-    espresso_walberla
+    walberla_bridge
     PRIVATE CollideSweepSinglePrecisionLeesEdwardsAVX.cpp
             CollideSweepDoublePrecisionLeesEdwardsAVX.cpp
             CollideSweepSinglePrecisionThermalizedAVX.cpp
             CollideSweepDoublePrecisionThermalizedAVX.cpp)
 else()
   target_sources(
-    espresso_walberla
+    walberla_bridge
     PRIVATE CollideSweepSinglePrecisionLeesEdwards.cpp
             CollideSweepDoublePrecisionLeesEdwards.cpp
             CollideSweepSinglePrecisionThermalized.cpp

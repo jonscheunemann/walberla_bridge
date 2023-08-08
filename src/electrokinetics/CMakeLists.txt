@@ -20,8 +20,8 @@
 add_subdirectory(generated_kernels)
 add_subdirectory(reactions)
 
-target_sources(espresso_walberla PRIVATE ek_walberla_init.cpp)
-target_sources(espresso_walberla PRIVATE ek_poisson_none_init.cpp)
-if(ESPRESSO_BUILD_WITH_WALBERLA_FFT)
-  target_sources(espresso_walberla PRIVATE ek_poisson_fft_init.cpp)
+target_sources(walberla_bridge PRIVATE ek_walberla_init.cpp)
+target_sources(walberla_bridge PRIVATE ek_poisson_none_init.cpp)
+if(WALBERLA_BRIDGE_BUILD_WITH_WALBERLA_FFT)
+  target_sources(walberla_bridge PRIVATE ek_poisson_fft_init.cpp)
 endif()

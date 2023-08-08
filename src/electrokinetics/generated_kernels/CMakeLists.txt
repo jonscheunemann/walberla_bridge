@@ -19,7 +19,7 @@
 
 foreach(precision double_precision single_precision)
   target_sources(
-    espresso_walberla
+    walberla_bridge
     PRIVATE DiffusiveFluxKernel_${precision}.cpp
             DiffusiveFluxKernelWithElectrostatic_${precision}.cpp
             ContinuityKernel_${precision}.cpp

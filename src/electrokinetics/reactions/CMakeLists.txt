@@ -19,5 +19,5 @@
 
 add_subdirectory(generated_kernels)
 
-target_sources(espresso_walberla PRIVATE EKReactionImplBulk.cpp
+target_sources(walberla_bridge PRIVATE EKReactionImplBulk.cpp
                                          EKReactionImplIndexed.cpp)

@@ -17,6 +17,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cmake_minimum_required(VERSION 3.20)
+message(STATUS "CMake version: ${CMAKE_VERSION}")
+if(POLICY CMP0076)
+  # make target_sources() convert relative paths to absolute
+  cmake_policy(SET CMP0076 NEW)
+endif()
+if(POLICY CMP0025)
+  # make CXX_COMPILER_ID return "AppleClang" instead of "Clang" for Apple Clang
+  cmake_policy(SET CMP0025 NEW)
+endif()
+if(POLICY CMP0074)
+  # make find_package() use <PackageName>_ROOT variables
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
+
 # cmake-format: off
 include(FetchContent)
 FetchContent_Declare(

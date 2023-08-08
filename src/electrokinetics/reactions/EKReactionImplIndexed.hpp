@@ -25,7 +25,7 @@
 
 #include <utils/Vector.hpp>
 
-#include <optional>
+#include <boost/optional.hpp>
 
 #include <cstddef>
 #include <memory>
@@ -53,7 +53,7 @@ public:
   void perform_reaction() override;
 
   void set_node_is_boundary(Utils::Vector3i const &node, bool is_boundary);
-  [[nodiscard]] std::optional<bool>
+  [[nodiscard]] boost::optional<bool>
   get_node_is_boundary(Utils::Vector3i const &node);
 
   [[nodiscard]] auto get_indexvector_id() const noexcept {

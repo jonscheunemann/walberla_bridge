@@ -30,7 +30,7 @@
 #include <domain_decomposition/IBlock.h>
 #include <field/AddToStorage.h>
 
-#include <optional>
+#include <boost/optional.hpp>
 
 #include <cstddef>
 #include <memory>
@@ -183,7 +183,7 @@ void EKReactionImplIndexed::set_node_is_boundary(Utils::Vector3i const &node,
   m_pending_changes = true;
 }
 
-std::optional<bool>
+boost::optional<bool>
 EKReactionImplIndexed::get_node_is_boundary(Utils::Vector3i const &node) {
   auto bc = get_block_and_cell(*get_lattice(), node, true);
   if (!bc)

@@ -18,6 +18,7 @@
 #
 
 cmake_minimum_required(VERSION 3.20)
+project(walberla_bridge)
 message(STATUS "CMake version: ${CMAKE_VERSION}")
 if(POLICY CMP0076)
   # make target_sources() convert relative paths to absolute

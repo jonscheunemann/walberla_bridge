@@ -31,6 +31,7 @@ if(POLICY CMP0074)
   # make find_package() use <PackageName>_ROOT variables
   cmake_policy(SET CMP0074 NEW)
 endif()
+find_package(MPI 3.0 REQUIRED)
 
 
 # cmake-format: off

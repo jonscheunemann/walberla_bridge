@@ -32,8 +32,15 @@ if(POLICY CMP0074)
   # make find_package() use <PackageName>_ROOT variables
   cmake_policy(SET CMP0074 NEW)
 endif()
-find_package(MPI 3.0 REQUIRED)
 
+find_package(MPI 3.0 REQUIRED)
+list(APPEND BOOST_COMPONENTS mpi serialization filesystem system)
+
+if(WALBERLA_BRIDGE_BUILD_TESTS)
+  list(APPEND BOOST_COMPONENTS unit_test_framework)
+endif()
+
+find_package(Boost 1.74.0 REQUIRED ${BOOST_COMPONENTS})
 
 # cmake-format: off
 include(FetchContent)
@@ -136,6 +143,7 @@ target_include_directories(
   PRIVATE ${WALBERLA_INCLUDE_DIRS} ${walberla_BINARY_DIR}/src)
 
 add_subdirectory(src)
+add_subdirectory(include/walberla_bridge)
 
 if(WALBERLA_BRIDGE_BUILD_TESTS)
   add_subdirectory(tests)

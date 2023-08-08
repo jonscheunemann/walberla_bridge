@@ -42,6 +42,36 @@ endif()
 
 find_package(Boost 1.74.0 REQUIRED ${BOOST_COMPONENTS})
 
+add_library(walberla_bridge_cpp_flags INTERFACE)
+add_library(walberla_bridge::cpp_flags ALIAS walberla_bridge_cpp_flags)
+target_compile_options(
+  walberla_bridge_cpp_flags
+  INTERFACE
+    -Wall
+    -Wextra
+    -pedantic
+    $<$<BOOL:${WALBERLA_BRIDGE_WARNINGS_ARE_ERRORS}>:-Werror>
+    # add extra warnings
+    $<$<CXX_COMPILER_ID:Clang>:-Wextern-initializer>
+    $<$<CXX_COMPILER_ID:Clang>:-Wrange-loop-analysis>
+    -Wfloat-conversion
+    $<$<CXX_COMPILER_ID:Clang,AppleClang,IntelLLVM>:-Wimplicit-float-conversion>
+    $<$<CXX_COMPILER_ID:Clang,AppleClang,IntelLLVM>:-Wunused-exception-parameter>
+    $<$<CXX_COMPILER_ID:Clang,AppleClang,IntelLLVM>:-Wmissing-variable-declarations>
+    $<$<AND:$<CXX_COMPILER_ID:Clang>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,11.0.0>>:-Wnon-c-typedef-for-linkage>
+    $<$<NOT:$<CXX_COMPILER_ID:Intel>>:-Wdelete-non-virtual-dtor>
+    # disable warnings from -Wextra
+    -Wno-sign-compare
+    -Wno-unused-function
+    -Wno-unused-parameter
+    $<$<CXX_COMPILER_ID:GNU>:-Wno-clobbered>
+    $<$<CXX_COMPILER_ID:Intel,IntelLLVM>:-diag-disable=592>
+    $<$<CXX_COMPILER_ID:Clang,AppleClang>:-Wno-gnu-zero-variadic-macro-arguments>
+    $<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,8.1.0>>:-Wno-cast-function-type>
+    $<$<NOT:$<CXX_COMPILER_ID:Intel,IntelLLVM>>:-Wno-implicit-fallthrough>
+    $<$<NOT:$<CXX_COMPILER_ID:Intel,IntelLLVM,GNU>>:-Wno-unused-private-field>)
+
+
 # cmake-format: off
 include(FetchContent)
 FetchContent_Declare(
@@ -108,11 +138,11 @@ add_library(walberla_bridge::walberla ALIAS walberla_bridge)
 set_target_properties(walberla_bridge PROPERTIES CXX_CLANG_TIDY "")
 target_include_directories(walberla_bridge PUBLIC include)
 
-add_library(walberla_bridge_cpp_flags INTERFACE)
-set_target_properties(walberla_bridge_cpp_flags PROPERTIES CXX_CLANG_TIDY "")
-add_library(walberla_bridge::walberla::cpp_flags ALIAS walberla_bridge_cpp_flags)
+add_library(walberla_bridge_walberla_cpp_flags INTERFACE)
+set_target_properties(walberla_bridge_walberla_cpp_flags PROPERTIES CXX_CLANG_TIDY "")
+add_library(walberla_bridge::walberla::cpp_flags ALIAS walberla_bridge_walberla_cpp_flags)
 if(WALBERLA_BRIDGE_BUILD_WITH_WALBERLA_AVX)
-  target_link_libraries(walberla_bridge_cpp_flags
+  target_link_libraries(walberla_bridge_walberla_cpp_flags
                         INTERFACE walberla_bridge::avx_flags)
 endif()
 install(TARGETS walberla_bridge

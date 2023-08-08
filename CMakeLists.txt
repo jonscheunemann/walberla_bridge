@@ -17,6 +17,66 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# cmake-format: off
+include(FetchContent)
+FetchContent_Declare(
+  walberla
+  GIT_REPOSITORY https://i10git.cs.fau.de/walberla/walberla.git
+  GIT_TAG        065ce5f311850371a97ac4766f47dbb5ca8424ba
+)
+# workaround for https://gitlab.kitware.com/cmake/cmake/-/issues/21146
+if(NOT DEFINED walberla_SOURCE_DIR OR NOT EXISTS "${walberla_SOURCE_DIR}")
+  FetchContent_Populate(walberla)
+endif()
+set(WALBERLA_BUILD_TESTS off CACHE BOOL "")
+set(WALBERLA_BUILD_BENCHMARKS off CACHE BOOL "")
+set(WALBERLA_BUILD_TOOLS off CACHE BOOL "")
+set(WALBERLA_BUILD_TUTORIALS off CACHE BOOL "")
+set(WALBERLA_BUILD_SHOWCASES off CACHE BOOL "")
+set(WALBERLA_BUILD_DOC off CACHE BOOL "")
+set(WALBERLA_LOGLEVEL "WARNING" CACHE STRING "")
+set(CMAKE_POSITION_INDEPENDENT_CODE on CACHE BOOL "")
+if(WALBERLA_BRIDGE_BUILD_WITH_CUDA)
+  set(WALBERLA_BUILD_WITH_CUDA "on" CACHE BOOL "")
+  if(CMAKE_VERSION VERSION_LESS 3.25 OR NOT WALBERLA_BRIDGE_CUDA_COMPILER STREQUAL
+                                        "clang")
+    if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+      set(CMAKE_CUDA_ARCHITECTURES 75)
+    endif()
+  endif()
+endif()
+if(WALBERLA_BRIDGE_BUILD_WITH_WALBERLA_FFT)
+  set(WALBERLA_BRIDGE_USE_WALBERLA_FFT 1)
+  set(WALBERLA_BUILD_WITH_FFTW on CACHE BOOL "")
+else()
+  set(WALBERLA_BUILD_WITH_FFTW off CACHE BOOL "")
+endif()
+set(WALBERLA_BUILD_WITH_FASTMATH off CACHE BOOL "")
+add_subdirectory("${walberla_SOURCE_DIR}" "${walberla_BINARY_DIR}")
+set(WALBERLA_LIBS
+    walberla::core walberla::domain_decomposition walberla::blockforest
+    walberla::boundary walberla::field walberla::lbm walberla::timeloop
+    walberla::vtk)
+if(WALBERLA_BRIDGE_BUILD_WITH_WALBERLA_FFT)
+  set(WALBERLA_LIBS ${WALBERLA_LIBS} walberla::fft)
+endif()
+if(WALBERLA_BRIDGE_BUILD_WITH_CUDA AND WALBERLA_BUILD_WITH_CUDA)
+  set(WALBERLA_LIBS ${WALBERLA_LIBS} walberla::cuda)
+endif()
+# workaround for https://gitlab.kitware.com/cmake/cmake/-/issues/21283
+foreach(target_w_namespace IN LISTS WALBERLA_LIBS)
+string(REPLACE "walberla::" "" target_wo_namespace ${target_w_namespace})
+add_library(${target_w_namespace} ALIAS ${target_wo_namespace})
+endforeach()
+if(WALBERLA_BRIDGE_BUILD_WITH_WALBERLA_AVX)
+function(walberla_bridge_avx_flags_callback COMPILER_AVX2_FLAG)
+  target_compile_options(
+    walberla_bridge_avx_flags INTERFACE "${COMPILER_AVX2_FLAG}"
+                                 "-DESPRESSO_BUILD_WITH_AVX_KERNELS")
+endfunction()
+walberla_bridge_enable_avx2_support(walberla_bridge_avx_flags_callback)
+endif()
+
 add_library(walberla_bridge SHARED)
 add_library(walberla_bridge::walberla ALIAS walberla_bridge)
 

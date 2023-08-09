@@ -27,7 +27,3 @@ target_include_directories(
 target_link_libraries(walberla_bridge_utils INTERFACE Boost::serialization)
 target_link_libraries(walberla_bridge_utils_mpi INTERFACE walberla_bridge::utils Boost::mpi
                                                    MPI::MPI_CXX)
-
-if(WALBERLA_BRIDGE_BUILD_TESTS)
-  add_subdirectory(tests)
-endif()

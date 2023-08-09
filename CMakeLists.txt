@@ -33,8 +33,26 @@ if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
 endif()
 
+# C++ standard
+enable_language(CXX)
+set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ standard to be used")
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 find_package(MPI 3.0 REQUIRED)
 list(APPEND BOOST_COMPONENTS mpi serialization filesystem system)
+
+#Options for caching
+option(WALBERLA_BRIDGE_BUILD_WITH_CCACHE "Use ccache compiler invocation." OFF)
+if(WALBERLA_BRIDGE_BUILD_WITH_CCACHE)
+  find_program(CCACHE_PROGRAM ccache REQUIRED)
+  if(CCACHE_PROGRAM)
+    message(STATUS "Found ccache: ${CCACHE_PROGRAM}")
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+    set(CMAKE_CUDA_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+  endif()
+endif()
+
 
 if(WALBERLA_BRIDGE_BUILD_TESTS)
   list(APPEND BOOST_COMPONENTS unit_test_framework)

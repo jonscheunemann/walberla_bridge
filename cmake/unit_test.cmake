@@ -29,7 +29,7 @@ function(UNIT_TEST)
     target_link_libraries(${TEST_NAME} PRIVATE ${TEST_DEPENDS})
   endif()
   target_include_directories(${TEST_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/core)
-  target_link_libraries(${TEST_NAME} PRIVATE walberla_bridge::config walberla_bridge::cpp_flags)
+  target_link_libraries(${TEST_NAME} PRIVATE walberla_bridge::cpp_flags)
 
   # If NUM_PROC is given, set up MPI parallel test case
   if(TEST_NUM_PROC)

@@ -32,6 +32,8 @@ if(POLICY CMP0074)
   # make find_package() use <PackageName>_ROOT variables
   cmake_policy(SET CMP0074 NEW)
 endif()
+# CMake modules/macros are in a subdirectory to keep this file cleaner
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # C++ standard
 enable_language(CXX)
@@ -54,8 +56,45 @@ if(WALBERLA_BRIDGE_BUILD_WITH_CCACHE)
 endif()
 
 
+# OpenMPI cannot run two jobs in parallel in a Docker container, because the
+# same base folder is used to store the process ids of multiple jobs. Since the
+# base folder is deleted upon completion of a job, other jobs will fail when
+# attempting to create subdirectories in the base folder.
+# https://github.com/open-mpi/ompi/issues/8510
+if("${WALBERLA_BRIDGE_MPIEXEC_VENDOR}" STREQUAL "OpenMPI" AND WALBERLA_BRIDGE_INSIDE_DOCKER)
+  cmake_host_system_information(RESULT hostname QUERY HOSTNAME)
+  function(walberla_bridge_set_mpiexec_tmpdir)
+    set(WALBERLA_BRIDGE_MPIEXEC_TMPDIR --mca orte_tmpdir_base
+                                "/tmp/ompi.${hostname}.$ENV{USER}.${ARGV0}"
+        PARENT_SCOPE)
+  endfunction()
+else()
+  function(walberla_bridge_set_mpiexec_tmpdir)
+    set(WALBERLA_BRIDGE_MPIEXEC_TMPDIR "" PARENT_SCOPE)
+  endfunction()
+endif()
+
+
+
 if(WALBERLA_BRIDGE_BUILD_TESTS)
+  enable_testing()
+  add_custom_target(check)
+  set(WALBERLA_BRIDGE_CTEST_ARGS ""
+      CACHE STRING
+            "Extra arguments to give to ctest calls (separated by semicolons)")
+  set(WALBERLA_BRIDGE_TEST_NP "4" CACHE STRING
+                                "Maximal number of MPI ranks to use per test")
+  if(WALBERLA_BRIDGE_BUILD_WITH_PYTHON)
+    add_subdirectory(testsuite) #AAAAAAAAAAAAAAAAAAAAAH
+  endif()
+
+# Target for the unit tests
+  add_custom_target(
+    check_unit_tests
+    COMMAND ${CMAKE_CTEST_COMMAND} --timeout ${WALBERLA_BRIDGE_TEST_TIMEOUT}
+            ${WALBERLA_BRIDGE_CTEST_ARGS} --output-on-failure)
   list(APPEND BOOST_COMPONENTS unit_test_framework)
+  add_dependencies(check check_unit_tests)
 endif()
 
 find_package(Boost 1.74.0 REQUIRED ${BOOST_COMPONENTS})

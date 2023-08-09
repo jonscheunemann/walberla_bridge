@@ -55,7 +55,24 @@ endif()
 
 
 if(WALBERLA_BRIDGE_BUILD_TESTS)
+  enable_testing()
+  add_custom_target(check)
+  set(WALBERLA_BRIDGE_CTEST_ARGS ""
+      CACHE STRING
+            "Extra arguments to give to ctest calls (separated by semicolons)")
+  set(WALBERLA_BRIDGE_TEST_NP "4" CACHE STRING
+                                "Maximal number of MPI ranks to use per test")
+  if(WALBERLA_BRIDGE_BUILD_WITH_PYTHON)
+    add_subdirectory(testsuite) #AAAAAAAAAAAAAAAAAAAAAH
+  endif()
+
+# Target for the unit tests
+  add_custom_target(
+    check_unit_tests
+    COMMAND ${CMAKE_CTEST_COMMAND} --timeout ${WALBERLA_BRIDGE_TEST_TIMEOUT}
+            ${WALBERLA_BRIDGE_CTEST_ARGS} --output-on-failure)
   list(APPEND BOOST_COMPONENTS unit_test_framework)
+  add_dependencies(check check_unit_tests)
 endif()
 
 find_package(Boost 1.74.0 REQUIRED ${BOOST_COMPONENTS})
